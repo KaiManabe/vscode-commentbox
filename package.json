@@ -9,13 +9,65 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration":[
+      {
+        "title": "Configure comment-box extension",
+        "properties": {
+          "commentBox.enableOneline":{
+            "type": "boolean",
+            "default": "true",
+            "description": "Enable one-line comment box"
+          },
+          "commentBox.onelineSnippet":{
+            "type": "string",
+            "default": "-----",
+            "description": "Set a snippet to generate one-line comment box"
+          },
+          "commentBox.enableBoxed":{
+            "type": "boolean",
+            "default": "true",
+            "description": "Enable multi-line comment box"
+          },
+          "commentBox.boxedSnippet":{
+            "type": "string",
+            "default": "=====",
+            "description": "Set a snippet to generate multi-line comment box"
+          },
+          "commentBox.onelineCommentDefinition":{
+            "type": "string",
+            "default": "-",
+            "description": "Set a character constructs one-line comment"
+          },
+          "commentBox.boxedCommentDefinition.horizontal":{
+            "type": "string",
+            "default": "-",
+            "description": "Set a character constructs multi-line comment"
+          },
+          "commentBox.boxedCommentDefinition.vertical":{
+            "type": "string",
+            "default": "|",
+            "description": "Set a character constructs multi-line comment"
+          },
+          "commentBox.boxedCommentDefinition.corner":{
+            "type": "string",
+            "default": "+",
+            "description": "Set a character constructs multi-line comment"
+          },
+          "commentBox.width":{
+            "type": "integer",
+            "default": 50,
+            "description": "Set line width of comment"
+          }
+        }
+      }
+    ],
     "commands": [
       {
-        "command": "comment-box.helloWorld",
-        "title": "Hello World"
+        "command": "comment-box.placeGeneratedComment",
+        "title": "Place generated comment"
       }
     ]
   },
