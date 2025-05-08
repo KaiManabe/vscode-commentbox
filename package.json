@@ -1,6 +1,7 @@
 {
   "name": "comment-box",
   "displayName": "comment-box",
+  "publisher": "KaiManabe",
   "description": "Type \"-----\" or \"=====\" to generate  comment.",
   "version": "0.0.1",
   "engines": {
