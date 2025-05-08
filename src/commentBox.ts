@@ -1,6 +1,5 @@
 import * as vscode from "vscode"
 import {COMMENT_TOKEN_DEFINITIONS} from "./commentTokens";
-import { availableMemory } from "process";
 
 export class commentBox{
 	private onelineSnippet!: string;
@@ -110,6 +109,7 @@ export class commentBox{
 	}
 
 	generateBoxedCommentString(lang: string, comments: string[]): string{
+		const EOL = this.getEndOfLine();
 		if(!(lang in COMMENT_TOKEN_DEFINITIONS)){
 			return "";
 		}
@@ -140,7 +140,7 @@ export class commentBox{
 				thisLine += this.boxedCommentDefinitionHorizontal;
 			}
 			thisLine += this.boxedCommentDefinitionCorner;
-			thisLine += "\n";
+			thisLine += EOL;
 			out += thisLine;
 
 
@@ -154,7 +154,7 @@ export class commentBox{
 					thisLine += " ";
 				}
 				thisLine += this.boxedCommentDefinitionVertical;
-				thisLine += "\n";
+				thisLine += EOL;
 				out += thisLine;	
 			}
 
@@ -165,9 +165,9 @@ export class commentBox{
 				thisLine += this.boxedCommentDefinitionHorizontal;
 			}
 			thisLine += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd;
-			thisLine += "\n";
+			thisLine += EOL;
 			out += thisLine;
-			out += "\n";
+			out += EOL;
 
 		}else if(COMMENT_TOKEN_DEFINITIONS[lang].lineComment != ""){
 			longestRow += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
@@ -183,7 +183,7 @@ export class commentBox{
 				thisLine += this.boxedCommentDefinitionHorizontal;
 			}
 			thisLine += this.boxedCommentDefinitionCorner;
-			thisLine += "\n";
+			thisLine += EOL;
 			out += thisLine;
 
 
@@ -198,7 +198,7 @@ export class commentBox{
 					thisLine += " ";
 				}
 				thisLine += this.boxedCommentDefinitionVertical;
-				thisLine += "\n";
+				thisLine += EOL;
 				out += thisLine;	
 			}
 
@@ -210,9 +210,9 @@ export class commentBox{
 				thisLine += this.boxedCommentDefinitionHorizontal;
 			}
 			thisLine += this.boxedCommentDefinitionCorner;
-			thisLine += "\n";
+			thisLine += EOL;
 			out += thisLine;
-			out += "\n";
+			out += EOL;
 		}
 
 		return out;
@@ -235,6 +235,7 @@ export class commentBox{
 
 
 	public provideCompletionItems(): vscode.ProviderResult<vscode.CompletionItem[]>{
+		const EOL = this.getEndOfLine();
 		const editor = vscode.window.activeTextEditor;
 		if(editor == null){
 			return undefined;
@@ -268,7 +269,7 @@ export class commentBox{
 			const range = this.getEditingRange(editor.document, cursor, this.boxedSnippet);
 			if(range == null) return undefined;
 
-			const commentText = this.generateBoxedCommentString(editor.document.languageId, this.getCommentFromEditingRange(editor.document, range, this.boxedSnippet).trim().split("\n"));
+			const commentText = this.generateBoxedCommentString(editor.document.languageId, this.getCommentFromEditingRange(editor.document, range, this.boxedSnippet).trim().split(EOL));
 
 			completion.command = {
 				command: "comment-box.placeGeneratedComment",
@@ -325,5 +326,16 @@ export class commentBox{
 
 		const commentText = targetText.slice(snippet.length, targetText.length - snippet.length);
 		return commentText.trim();
+	}
+
+
+	private getEndOfLine(): string{
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+		  const document = editor.document;
+		  const eol = document.eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
+		  return eol;
+		}
+		return "\n";
 	}
 }
