@@ -45,8 +45,14 @@ export function activate(context: vscode.ExtensionContext) {
 		{provideCompletionItems: generator.provideCompletionItems.bind(generator)},
 		generator.getBoxedSnippet().substring(generator.getBoxedSnippet().length - 1, generator.getBoxedSnippet().length)
 	);
+
+
+	const disposable = vscode.workspace.onDidChangeConfiguration(event => {
+		generator.getConfig();
+	  });
 	
-	
+	  
+	context.subscriptions.push(disposable);
 	context.subscriptions.push(oneLineProvider);
 	context.subscriptions.push(boxedProvider);
 }

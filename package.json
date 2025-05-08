@@ -61,6 +61,11 @@
             "type": "integer",
             "default": 50,
             "description": "Set line width of comment"
+          },
+          "commentBox.fullCharacterWidth":{
+            "type": "number",
+            "default": 2,
+            "description": "= Full-character width / Half-character width"
           }
         }
       }

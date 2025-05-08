@@ -12,12 +12,13 @@ export class commentBox{
 	private boxedCommentDefinitionVertical!: string;
 	private boxedCommentDefinitionCorner!: string;
 	private maxWidth!: number;
+	private fullCharWidth!: number;
 
 	constructor(){
 		this.getConfig();
 	}
 
-	private getConfig(){
+	public getConfig(){
 		const config = vscode.workspace.getConfiguration('commentBox');
 
 		this.enableOneline = config.get<boolean>('enableOneline') ?? false;
@@ -29,6 +30,7 @@ export class commentBox{
 		this.boxedCommentDefinitionVertical = config.get<string>('boxedCommentDefinition.vertical') ?? "|";
 		this.boxedCommentDefinitionCorner = config.get<string>('boxedCommentDefinition.corner') ?? "+";
 		this.maxWidth = config.get<number>('width') ?? 50;
+		this.fullCharWidth = config.get<number>('fullCharacterWidth') ?? 2.0;
 
 		if(this.onelineSnippet == ""){
 			this.enableOneline = false;
@@ -54,49 +56,56 @@ export class commentBox{
 		let out: string = "";
 
 		if(COMMENT_TOKEN_DEFINITIONS[lang].lineComment != ""){
-			let width: number = this.getStringWidth(comment);
-			width += 2;
-			width += COMMENT_TOKEN_DEFINITIONS[lang].lineComment.length;
+			let currentString: string = comment;
+			currentString += " ";
+			currentString += " ";
+			currentString += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
 
-			let charCount: number = (this.maxWidth - width) / 2;
+			let width: number = this.getStringWidth(currentString);
+
+			let charCount: number = (this.maxWidth - width) / 2 / this.getStringWidth(this.onelineCommentDefinition);
 			if(charCount < 0){
 				charCount = 3;
 			}
 
 			out += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
-			for(let i: number = 0; i < charCount; i += this.onelineCommentDefinition.length){
+			for(let i: number = 0; i < charCount; ++i){
 				out += this.onelineCommentDefinition;
 			}
 			out += " ";
 			out += comment;
 			out += " ";
-			for(let i: number = 0; i < charCount; i += this.onelineCommentDefinition.length){
+			for(let i: number = 0; i < charCount; ++i){
 				out += this.onelineCommentDefinition;
 			}
+
 		}else{
-			let width: number = this.getStringWidth(comment);
-			width += 2;
-			width += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentBegin.length;
-			width += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd.length;
-			let charCount: number = (this.maxWidth - width) / 2;
+			let currentString: string = comment;
+			currentString += " ";
+			currentString += " ";
+			currentString += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentBegin;
+			currentString += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd;
+
+			let width: number = this.getStringWidth(currentString);
+
+			let charCount: number = (this.maxWidth - width) / 2 / this.getStringWidth(this.onelineCommentDefinition);
 			if(charCount < 0){
 				charCount = 3;
 			}
 
 			out += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentBegin;
-			for(let i: number = 0; i < charCount; i += this.onelineCommentDefinition.length){
+			for(let i: number = 0; i < charCount; ++i){
 				out += this.onelineCommentDefinition;
 			}
 			out += " ";
 			out += comment;
 			out += " ";
-			for(let i: number = 0; i < charCount; i += this.onelineCommentDefinition.length){
+			for(let i: number = 0; i < charCount; ++i){
 				out += this.onelineCommentDefinition;
 			}
 			out += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd;
 		}
 
-		out += "\n";
 		return out;
 	}
 
@@ -106,102 +115,103 @@ export class commentBox{
 		}
 
 		let out: string = "";
+		let longestRow: string = "";
+		let width: number = this.maxWidth;
+		for(const comment of comments){
+			if(this.getStringWidth(comment) > this.getStringWidth(longestRow)){
+				longestRow = comment;
+			}
+		}
+
+		longestRow += " ";
+		longestRow += " ";
+		longestRow += this.boxedCommentDefinitionVertical;
+		longestRow += this.boxedCommentDefinitionVertical;
 
 		if(COMMENT_TOKEN_DEFINITIONS[lang].blockCommentBegin != "" && COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd != ""){
-			let width: number = 0;
+			if(this.getStringWidth(longestRow) > width){
+				width = this.getStringWidth(longestRow);
+			}
+			
+			let thisLine: string = "";
+
+			thisLine += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentBegin;
+			while(this.getStringWidth(thisLine + this.boxedCommentDefinitionCorner) < width){
+				thisLine += this.boxedCommentDefinitionHorizontal;
+			}
+			thisLine += this.boxedCommentDefinitionCorner;
+			thisLine += "\n";
+			out += thisLine;
+
+
 			for(const comment of comments){
-				let tmp: number = this.getStringWidth(comment);
-				if(tmp > width){
-					width = tmp;
+				thisLine = "";
+				thisLine += this.boxedCommentDefinitionVertical;
+				thisLine += " ";
+				thisLine += comment;
+
+				while(this.getStringWidth(thisLine + this.boxedCommentDefinitionVertical) < width){
+					thisLine += " ";
 				}
+				thisLine += this.boxedCommentDefinitionVertical;
+				thisLine += "\n";
+				out += thisLine;	
 			}
 
 
-			width += 2;
-			width += this.boxedCommentDefinitionVertical.length;
-			width += this.boxedCommentDefinitionVertical.length;
-
-
-			let allWidth: number = this.maxWidth;
-			if(width > allWidth){
-				allWidth = width;
+			thisLine = "";
+			thisLine += this.boxedCommentDefinitionCorner;
+			while(this.getStringWidth(thisLine + COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd) < width){
+				thisLine += this.boxedCommentDefinitionHorizontal;
 			}
-
-			out += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentBegin;
-			for(let i: number = COMMENT_TOKEN_DEFINITIONS[lang].blockCommentBegin.length; i < (allWidth - this.boxedCommentDefinitionCorner.length); i += this.boxedCommentDefinitionHorizontal.length){
-				out += this.boxedCommentDefinitionHorizontal;
-			}
-			out += this.boxedCommentDefinitionCorner;
+			thisLine += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd;
+			thisLine += "\n";
+			out += thisLine;
 			out += "\n";
 
-			for(const comment of comments){
-				out += this.boxedCommentDefinitionVertical;
-				out += " ";
-				out += comment;
-				for(let i: number = (comment.length + this.boxedCommentDefinitionVertical.length + 1); i < (allWidth - this.boxedCommentDefinitionVertical.length - 1); ++i){
-					out += " ";
-				}
-				out += " ";
-				out += this.boxedCommentDefinitionVertical;
-				out += "\n";
+		}else if(COMMENT_TOKEN_DEFINITIONS[lang].lineComment != ""){
+			longestRow += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
+			if(this.getStringWidth(longestRow) > width){
+				width = this.getStringWidth(longestRow);
 			}
+			
+			let thisLine: string = "";
 
-
-			out += this.boxedCommentDefinitionCorner;
-			for(let i: number = this.boxedCommentDefinitionCorner.length; i < (allWidth - COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd.length); i += this.boxedCommentDefinitionHorizontal.length){
-				out += this.boxedCommentDefinitionHorizontal;
+			thisLine += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
+			thisLine += this.boxedCommentDefinitionCorner;
+			while(this.getStringWidth(thisLine + this.boxedCommentDefinitionCorner) < width){
+				thisLine += this.boxedCommentDefinitionHorizontal;
 			}
-			out += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd;
-			out += "\n";
-		}else{
-			let width: number = 0;
-			for(const comment of comments){
-				let tmp: number = this.getStringWidth(comment);
-				if(tmp > width){
-					width = tmp;
-				}
-			}
-
-			width += COMMENT_TOKEN_DEFINITIONS[lang].lineComment.length;
-			width += 2;
-			width += this.boxedCommentDefinitionVertical.length;
-			width += this.boxedCommentDefinitionVertical.length;
-
-
-			let allWidth: number = this.maxWidth;
-			if(width > allWidth){
-				allWidth = width;
-			}
-
-
-			out += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
-			out += this.boxedCommentDefinitionCorner;
-			for(let i: number = (COMMENT_TOKEN_DEFINITIONS[lang].lineComment.length + this.boxedCommentDefinitionCorner.length); i < (allWidth - this.boxedCommentDefinitionCorner.length); i += this.boxedCommentDefinitionHorizontal.length){
-				out += this.boxedCommentDefinitionHorizontal;
-			}
-			out += this.boxedCommentDefinitionCorner;
-			out += "\n";
+			thisLine += this.boxedCommentDefinitionCorner;
+			thisLine += "\n";
+			out += thisLine;
 
 
 			for(const comment of comments){
-				out += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
-				out += this.boxedCommentDefinitionVertical;
-				out += " ";
-				out += comment;
-				for(let i: number = (COMMENT_TOKEN_DEFINITIONS[lang].lineComment.length + comment.length + this.boxedCommentDefinitionVertical.length + 1); i < (allWidth - this.boxedCommentDefinitionVertical.length - 1); ++i){
-					out += " ";
+				thisLine = "";
+				thisLine += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
+				thisLine += this.boxedCommentDefinitionVertical;
+				thisLine += " ";
+				thisLine += comment;
+
+				while(this.getStringWidth(thisLine + this.boxedCommentDefinitionVertical) < width){
+					thisLine += " ";
 				}
-				out += " ";
-				out += this.boxedCommentDefinitionVertical;
-				out += "\n";
+				thisLine += this.boxedCommentDefinitionVertical;
+				thisLine += "\n";
+				out += thisLine;	
 			}
 
-			out += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
-			out += this.boxedCommentDefinitionCorner;
-			for(let i: number = (COMMENT_TOKEN_DEFINITIONS[lang].lineComment.length + this.boxedCommentDefinitionCorner.length); i < (allWidth - this.boxedCommentDefinitionCorner.length); i += this.boxedCommentDefinitionHorizontal.length){
-				out += this.boxedCommentDefinitionHorizontal;
+
+			thisLine = "";
+			thisLine += COMMENT_TOKEN_DEFINITIONS[lang].lineComment;
+			thisLine += this.boxedCommentDefinitionCorner;
+			while(this.getStringWidth(thisLine + this.boxedCommentDefinitionCorner) < width){
+				thisLine += this.boxedCommentDefinitionHorizontal;
 			}
-			out += this.boxedCommentDefinitionCorner;
+			thisLine += this.boxedCommentDefinitionCorner;
+			thisLine += "\n";
+			out += thisLine;
 			out += "\n";
 		}
 
@@ -216,7 +226,7 @@ export class commentBox{
 			if(/^[\x01-\x7E]$/.test(c)){
 				num += 1;
 			}else{
-				num += 2;
+				num += this.fullCharWidth;
 			}
 		}
 
