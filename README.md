@@ -1,71 +1,87 @@
-# comment-box README
+# :vs: vscode comment-box
+## :jp: 日本語
+## :information_source: 概要
+- vscodeで枠線付きのコメントを生成します
+- 次の2種類のコメントが生成できます
+  - ラインコメントによる区切り線
+    - ![oneline-gif](media/oneline.gif)
+  - ブロックコメントによる枠線つきコメント
+    - ![multiline-gif](media/multiline.gif)  
 
-This is the README for your extension "comment-box". After writing up a brief description, we recommend including the following sections.
+## :white_check_mark: インストール方法 (VSIX)
+1. [Releases](https://github.com/KaiManabe/vscode-commentbox/releases) > `Assets` より最新のvsixをダウンロード
+2. vscodeを起動 > 拡張機能タブを開く
+3. 右上 `・・・` ボタン ＞ `VSIXからのインストール`
+4. ダウンロードしたVSIXを選択しインストール
 
-## Features
+## :memo: 使い方
+- スニペット等はデフォルトの値が示されていますが，[設定](#wrench-設定)に従って変更することができます
+  
+### 1. ラインコメント
+1. `---任意のコメント任意のコメント任意のコメント---`と入力します
+2. 補完候補`Generate oneline comment`が表示されたらEnterを押します
+  
+### 2. ブロックコメント
+1. `===任意のコメント任意のコメント任意のコメント===`と入力します
+2. 補完候補`Generate multi-line comment`が表示されたらEnterを押します
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
-For example if there is an image subfolder under your extension project workspace:
+## :wrench: 設定
+1. `ctrl + ,` (デフォルト)で設定を開きます
+2. 検索窓に `commentBox` を入力すると設定が出ます
+3. [CONFIG.md](./media/CONFIG.md)にしたがって設定を変更できます
 
-\!\[feature X\]\(images/feature-x.png\)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## :beginner: 免責事項
+- **実務未経験のガキンチョが作りました**
+- ので，使用する場合自己責任での使用をお願いします
 
-## Requirements
+<br>
+<br>
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
-## Extension Settings
+## :us: English (By translator)
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## :information_source: Overview
 
-For example:
+- Generates bordered comments in VSCode
+- Supports two types of comments:
 
-This extension contributes the following settings:
+  - Divider line using line comments
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+    - ![oneline-gif](./media/oneline.gif)
+  - Bordered comment using block comments
 
-## Known Issues
+    - ![multiline-gif](./media/multiline.gif)
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## :white_check_mark: Installation (VSIX)
 
-## Release Notes
+1. Go to [Releases](https://github.com/KaiManabe/vscode-commentbox/releases) and download the latest `.vsix` from `Assets`
+2. Open VSCode and go to the Extensions tab
+3. Click the `...` button at the top right > `Install from VSIX...`
+4. Select the downloaded VSIX file to install
 
-Users appreciate release notes as you update your extension.
+## :memo: Usage
 
-### 1.0.0
+- The default snippet values can be customized according to the [Settings](#wrench-settings)
 
-Initial release of ...
+### 1. Line Comment
 
-### 1.0.1
+1. Type `---your comment your comment your comment---`
+2. When the completion suggestion `Generate oneline comment` appears, press Enter
 
-Fixed issue #.
+### 2. Block Comment
 
-### 1.1.0
+1. Type `===your comment your comment your comment===`
+2. When the completion suggestion `Generate multi-line comment` appears, press Enter
 
-Added features X, Y, and Z.
+## :wrench: Settings
 
----
+1. Open settings with `Ctrl + ,` (default)
+2. Search for `commentBox` in the search bar
+3. You can customize settings according to [CONFIG.md](./media/CONFIG.md)
 
-## Following extension guidelines
+## :beginner: Disclaimer
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- **This extension was made by an inexperienced hobbyist**
+- Please use it at your own risk
