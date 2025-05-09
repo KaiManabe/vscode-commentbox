@@ -1,12 +1,20 @@
+/* ----------------------------------------------------------------------------------------------------+
+| This file defines tokens of comment for each languages.                                              |
+| To add new definitions, add new `commentTokenDefinition` object to `const COMMENT_TOKEN_DEFINITIONS` |
++---------------------------------------------------------------------------------------------------- */
+
+
 interface commentTokenDefinition{
     lineComment: string;
     blockCommentBegin: string; 
     blockCommentEnd: string; 
 }
 
+
 interface commentTokenDefinitions {
     [key: string]: commentTokenDefinition;
 }
+
 
 export const COMMENT_TOKEN_DEFINITIONS: commentTokenDefinitions = {
     "bat":        { lineComment: ":: ",   blockCommentBegin: "",                  blockCommentEnd: "" },

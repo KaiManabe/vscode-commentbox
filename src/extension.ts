@@ -1,7 +1,26 @@
+/* --------------------------------------------------------+
+| This file defines main function and utilities.           |
++-------------------------------------------------------- */
+
+// ----------------------- Importing -----------------------
 import * as vscode from "vscode";
 import {commentBox} from "./commentBox";
 
 
+// ------------------ Function definitions ------------------
+/**
+ * ### Replace original string wrapped with snippets with decolated comment string.
+ * 
+ * - Param `arg` must contain
+ * 
+ * 		- editor: vscode.TextEditor => current editor
+ * 
+ * 		- range: vscode.Range	    => range to replace
+ * 
+ * 		- text: string				=> replaced string
+ * 
+ * @param arg object
+ */
 function replaceCommentText(arg: any){
 	const editor: vscode.TextEditor = arg.editor;
 	const range: vscode.Range = arg.range;
@@ -28,7 +47,17 @@ function replaceCommentText(arg: any){
 }
 
 
-
+/**
+ * ### Called on startup
+ * 
+ * - Register command to replace original comment with decolated comment.
+ * 
+ * - Register competion items to detect input string wrapped with defined snippets.
+ * 
+ * - Add event listener of changing config.
+ * 
+ * @param context 
+ */
 export function activate(context: vscode.ExtensionContext) {
 	const generator = new commentBox();
 
@@ -49,9 +78,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const disposable = vscode.workspace.onDidChangeConfiguration(event => {
 		generator.getConfig();
-	  });
+	});
 	
-	  
+	
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(oneLineProvider);
 	context.subscriptions.push(boxedProvider);
