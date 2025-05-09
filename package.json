@@ -2,67 +2,75 @@
   "name": "comment-box",
   "displayName": "comment-box",
   "publisher": "KaiManabe",
-  "description": "Type \"-----\" or \"=====\" to generate  comment.",
-  "version": "0.0.1",
+  "description": "Generates decolated comment.",
+  "version": "1.0.0",
+  "icon": "media/icon.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KaiManabe/vscode-commentbox"
+  },
   "engines": {
     "vscode": "^1.99.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
-    "configuration":[
+    "configuration": [
       {
         "title": "Configure comment-box extension",
         "properties": {
-          "commentBox.enableOneline":{
+          "commentBox.enableOneline": {
             "type": "boolean",
             "default": "true",
             "description": "Enable one-line comment box"
           },
-          "commentBox.onelineSnippet":{
+          "commentBox.onelineSnippet": {
             "type": "string",
-            "default": "-----",
+            "default": "---",
             "description": "Set a snippet to generate one-line comment box"
           },
-          "commentBox.enableBoxed":{
+          "commentBox.enableBoxed": {
             "type": "boolean",
             "default": "true",
             "description": "Enable multi-line comment box"
           },
-          "commentBox.boxedSnippet":{
+          "commentBox.boxedSnippet": {
             "type": "string",
-            "default": "=====",
+            "default": "===",
             "description": "Set a snippet to generate multi-line comment box"
           },
-          "commentBox.onelineCommentDefinition":{
+          "commentBox.onelineCommentDefinition": {
             "type": "string",
             "default": "-",
             "description": "Set a character constructs one-line comment"
           },
-          "commentBox.boxedCommentDefinition.horizontal":{
+          "commentBox.boxedCommentDefinition.horizontal": {
             "type": "string",
             "default": "-",
             "description": "Set a character constructs multi-line comment"
           },
-          "commentBox.boxedCommentDefinition.vertical":{
+          "commentBox.boxedCommentDefinition.vertical": {
             "type": "string",
             "default": "|",
             "description": "Set a character constructs multi-line comment"
           },
-          "commentBox.boxedCommentDefinition.corner":{
+          "commentBox.boxedCommentDefinition.corner": {
             "type": "string",
             "default": "+",
             "description": "Set a character constructs multi-line comment"
           },
-          "commentBox.width":{
+          "commentBox.width": {
             "type": "integer",
             "default": 50,
             "description": "Set line width of comment"
           },
-          "commentBox.fullCharacterWidth":{
+          "commentBox.fullCharacterWidth": {
             "type": "number",
             "default": 2,
             "description": "= Full-character width / Half-character width"
@@ -89,17 +97,17 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.99.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/vscode": "^1.99.0",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
-    "eslint": "^9.25.1",
-    "typescript": "^5.8.3",
-    "ts-loader": "^9.5.2",
-    "webpack": "^5.99.7",
-    "webpack-cli": "^6.0.1",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.8",
+    "webpack-cli": "^6.0.1"
   }
 }
