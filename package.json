@@ -1,9 +1,9 @@
 {
   "name": "comment-box-generator",
-  "displayName": "comment-box",
+  "displayName": "Comment Box Generator",
   "publisher": "KaiManabe",
   "description": "Generates decolated comment.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "icon": "media/icon.png",
   "license": "MIT",
   "repository": {
