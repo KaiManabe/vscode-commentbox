@@ -447,13 +447,17 @@ export class commentBox{
 	 * @returns Original comment 
 	 */
 	private getCommentFromEditingRange(doc: vscode.TextDocument, range: vscode.Range, snippet: string): string{
+		const indent = doc.lineAt(range.start.line).firstNonWhitespaceCharacterIndex;
+		const indentRange = new vscode.Range(new vscode.Position(range.start.line, 0), new vscode.Position(range.start.line, indent));
+		const indentString = doc.getText(indentRange);
+
 		const targetText = doc.getText(range);
 		if (!targetText.startsWith(snippet) || !targetText.endsWith(snippet)) {
 			console.error("getCommentFromEditingRange got invalid arguments.");
 			return "";
 		}
 
-		const commentText = targetText.slice(snippet.length, targetText.length - snippet.length);
+		const commentText = targetText.slice(snippet.length, targetText.length - snippet.length).replaceAll(indentString, "");
 		return commentText.trim();
 	}
 
