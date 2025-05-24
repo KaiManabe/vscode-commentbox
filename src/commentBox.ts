@@ -512,11 +512,44 @@ export class commentBox{
 			if(str.substring(i - snippet.length, i) == snippet){
 				const startCursor = doc.positionAt(i - snippet.length);
 				const range = new vscode.Range(startCursor, cursor);
-				return range;
+				if(!commentBox.isComment(doc, startCursor))	return range;
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * ### Returns is the cursor in comment or not.
+	 * @param doc Editing document
+	 * @param cursor Examining position
+	 * @returns bool
+	 */
+	private static isComment(doc: vscode.TextDocument, cursor: vscode.Position): boolean{
+		const stringBeforeInLine = doc.getText(new vscode.Range(new vscode.Position(cursor.line, 0), cursor));
+		if(
+			COMMENT_TOKEN_DEFINITIONS[doc.languageId].lineComment != "" &&
+			stringBeforeInLine.includes(COMMENT_TOKEN_DEFINITIONS[doc.languageId].lineComment)
+		){
+			return true;
+		}
+
+		const cursorIdx = doc.offsetAt(cursor);
+		const blockCommentBegin = COMMENT_TOKEN_DEFINITIONS[doc.languageId].blockCommentBegin;
+		const blockCommentEnd = COMMENT_TOKEN_DEFINITIONS[doc.languageId].blockCommentEnd;
+		if(blockCommentBegin == "" || blockCommentEnd == "") return false;
+
+		for(let i = cursorIdx; i >= 0; --i){
+			let s = doc.getText().substring(i, cursorIdx);
+			if(s.includes(blockCommentBegin) && !s.includes(blockCommentEnd)){
+				for(let ii = cursorIdx; ii < doc.getText().length; ++ii){
+					let ss = doc.getText().substring(cursorIdx, ii);
+					if(!ss.includes(blockCommentBegin) && ss.includes(blockCommentEnd)) return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	
