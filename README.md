@@ -22,10 +22,12 @@
 ### 1. ラインコメント
 1. `---任意のコメント任意のコメント任意のコメント---`と入力します
 2. 補完候補`Generate oneline comment`が表示されたらEnterを押します
+3. (vscodeの仕様上，**言語によってはSpaceを押してからEnterを押さないと反応しません**)
   
 ### 2. ブロックコメント
 1. `===任意のコメント任意のコメント任意のコメント===`と入力します
 2. 補完候補`Generate multi-line comment`が表示されたらEnterを押します
+3. (vscodeの仕様上，**言語によってはSpaceを押してからEnterを押さないと反応しません**)
 
 
 ## :wrench: 設定
@@ -71,11 +73,13 @@
 
 1. Type `---your comment your comment your comment---`
 2. When the completion suggestion `Generate oneline comment` appears, press Enter
+3. (Due to vscode specifications, **some languages do not respond unless Space is pressed and then Enter is pressed**.)
 
 ### 2. Block Comment
 
 1. Type `===your comment your comment your comment===`
 2. When the completion suggestion `Generate multi-line comment` appears, press Enter
+3. (Due to vscode specifications, **some languages do not respond unless Space is pressed and then Enter is pressed**.)
 
 ## :wrench: Settings
 
