@@ -81,7 +81,15 @@ export class commentBox{
 			return undefined;
 		}
 
-		const cursor = editor.selection.active;
+		let cursor = editor.selection.active;
+
+		if(cursor.character > 0){
+			const prevCursor = new vscode.Position(cursor.line, cursor.character - 1);
+			const currentChar = editor.document.getText(new vscode.Range(prevCursor, cursor));
+			if(currentChar == " "){
+				cursor = prevCursor;
+			}
+		}
 
 		if(this.isGeneratingOneline(editor.document, cursor) && this.enableOneline){
 			const completion = new vscode.CompletionItem("Generate oneline comment", vscode.CompletionItemKind.Function);
@@ -439,13 +447,17 @@ export class commentBox{
 	 * @returns Original comment 
 	 */
 	private getCommentFromEditingRange(doc: vscode.TextDocument, range: vscode.Range, snippet: string): string{
+		const indent = doc.lineAt(range.start.line).firstNonWhitespaceCharacterIndex;
+		const indentRange = new vscode.Range(new vscode.Position(range.start.line, 0), new vscode.Position(range.start.line, indent));
+		const indentString = doc.getText(indentRange);
+
 		const targetText = doc.getText(range);
 		if (!targetText.startsWith(snippet) || !targetText.endsWith(snippet)) {
 			console.error("getCommentFromEditingRange got invalid arguments.");
 			return "";
 		}
 
-		const commentText = targetText.slice(snippet.length, targetText.length - snippet.length);
+		const commentText = targetText.slice(snippet.length, targetText.length - snippet.length).replaceAll("\n" + indentString, "\n");
 		return commentText.trim();
 	}
 
@@ -500,11 +512,44 @@ export class commentBox{
 			if(str.substring(i - snippet.length, i) == snippet){
 				const startCursor = doc.positionAt(i - snippet.length);
 				const range = new vscode.Range(startCursor, cursor);
-				return range;
+				if(!commentBox.isComment(doc, startCursor))	return range;
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * ### Returns is the cursor in comment or not.
+	 * @param doc Editing document
+	 * @param cursor Examining position
+	 * @returns bool
+	 */
+	private static isComment(doc: vscode.TextDocument, cursor: vscode.Position): boolean{
+		const stringBeforeInLine = doc.getText(new vscode.Range(new vscode.Position(cursor.line, 0), cursor));
+		if(
+			COMMENT_TOKEN_DEFINITIONS[doc.languageId].lineComment != "" &&
+			stringBeforeInLine.includes(COMMENT_TOKEN_DEFINITIONS[doc.languageId].lineComment)
+		){
+			return true;
+		}
+
+		const cursorIdx = doc.offsetAt(cursor);
+		const blockCommentBegin = COMMENT_TOKEN_DEFINITIONS[doc.languageId].blockCommentBegin;
+		const blockCommentEnd = COMMENT_TOKEN_DEFINITIONS[doc.languageId].blockCommentEnd;
+		if(blockCommentBegin == "" || blockCommentEnd == "") return false;
+
+		for(let i = cursorIdx; i >= 0; --i){
+			let s = doc.getText().substring(i, cursorIdx);
+			if(s.includes(blockCommentBegin) && !s.includes(blockCommentEnd)){
+				for(let ii = cursorIdx; ii < doc.getText().length; ++ii){
+					let ss = doc.getText().substring(cursorIdx, ii);
+					if(!ss.includes(blockCommentBegin) && ss.includes(blockCommentEnd)) return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	

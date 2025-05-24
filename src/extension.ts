@@ -26,16 +26,16 @@ function replaceCommentText(arg: any){
 	const range: vscode.Range = arg.range;
 	let text: string = arg.text;
 	const startPosition = range.start;
-	const indent: number = startPosition.character;
+	const indent = editor.document.lineAt(range.start.line).firstNonWhitespaceCharacterIndex;
+	const indentRange = new vscode.Range(new vscode.Position(range.start.line, 0), new vscode.Position(range.start.line, indent));
+	const indentString = editor.document.getText(indentRange);
 	let indentedText: string = "";
 
 	const lines = text.split("\n");
 	for(let i = 0; i < lines.length; ++i){
 		if(i != 0){
 			indentedText += "\n";
-			for(let j = 0; j < indent; ++j){
-				indentedText += " ";
-			}
+			indentedText += indentString;
 		}
 		indentedText += lines[i];
 	}
@@ -68,11 +68,21 @@ export function activate(context: vscode.ExtensionContext) {
 		{provideCompletionItems: generator.provideCompletionItems.bind(generator)},
 		generator.getOnelineSnippet().substring(generator.getOnelineSnippet().length - 1, generator.getOnelineSnippet().length)
 	);
+	const oneLineProviderWithSpace = vscode.languages.registerCompletionItemProvider(
+		{ scheme: 'file'},
+		{provideCompletionItems: generator.provideCompletionItems.bind(generator)},
+		" "
+	);
 
 	const boxedProvider = vscode.languages.registerCompletionItemProvider(
 		{ scheme: 'file'},
 		{provideCompletionItems: generator.provideCompletionItems.bind(generator)},
 		generator.getBoxedSnippet().substring(generator.getBoxedSnippet().length - 1, generator.getBoxedSnippet().length)
+	);
+	const boxedProviderWithSpace = vscode.languages.registerCompletionItemProvider(
+		{ scheme: 'file'},
+		{provideCompletionItems: generator.provideCompletionItems.bind(generator)},
+		" "
 	);
 
 
@@ -83,5 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(oneLineProvider);
+	context.subscriptions.push(oneLineProviderWithSpace);
 	context.subscriptions.push(boxedProvider);
+	context.subscriptions.push(boxedProviderWithSpace);
 }
