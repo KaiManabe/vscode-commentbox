@@ -81,7 +81,15 @@ export class commentBox{
 			return undefined;
 		}
 
-		const cursor = editor.selection.active;
+		let cursor = editor.selection.active;
+
+		if(cursor.character > 0){
+			const prevCursor = new vscode.Position(cursor.line, cursor.character - 1);
+			const currentChar = editor.document.getText(new vscode.Range(prevCursor, cursor));
+			if(currentChar == " "){
+				cursor = prevCursor;
+			}
+		}
 
 		if(this.isGeneratingOneline(editor.document, cursor) && this.enableOneline){
 			const completion = new vscode.CompletionItem("Generate oneline comment", vscode.CompletionItemKind.Function);
