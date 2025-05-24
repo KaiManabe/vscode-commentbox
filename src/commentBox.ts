@@ -457,7 +457,7 @@ export class commentBox{
 			return "";
 		}
 
-		const commentText = targetText.slice(snippet.length, targetText.length - snippet.length).replaceAll(indentString, "");
+		const commentText = targetText.slice(snippet.length, targetText.length - snippet.length).replaceAll("\n" + indentString, "\n");
 		return commentText.trim();
 	}
 
