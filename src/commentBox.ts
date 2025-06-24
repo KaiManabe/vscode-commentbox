@@ -180,7 +180,7 @@ export class commentBox{
 			let width: number = this.getStringWidth(currentString);
 
 			let charCount: number = (this.maxWidth - width) / 2 / this.getStringWidth(this.onelineCommentDefinition);
-			if(charCount < 0){
+			if(charCount < 3){
 				charCount = 3;
 			}
 
@@ -215,7 +215,7 @@ export class commentBox{
 			let width: number = this.getStringWidth(currentString);
 
 			let charCount: number = (this.maxWidth - width) / 2 / this.getStringWidth(this.onelineCommentDefinition);
-			if(charCount < 0){
+			if(charCount < 3){
 				charCount = 3;
 			}
 
@@ -518,7 +518,7 @@ export class commentBox{
 
 		return null;
 	}
-
+	
 	/**
 	 * ### Returns is the cursor in comment or not.
 	 * @param doc Editing document
