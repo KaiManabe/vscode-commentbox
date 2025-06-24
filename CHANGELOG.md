@@ -10,3 +10,7 @@
 - It doesn't generate oneline comment in css, html, xml (#1)
 - Indent bugs (#2, #6)
 - Unexpected completion items (#3)
+
+## 1.1.1
+### Bugfix
+- Unexpected char count in oneline comment (#9)
