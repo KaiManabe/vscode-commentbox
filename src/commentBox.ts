@@ -309,8 +309,10 @@ export class commentBox{
 				thisLine += comment;
 
 				// e.g.: [| original comment              ]
-				while(this.getStringWidth(thisLine + this.boxedCommentDefinitionVertical) < width){
-					thisLine += " ";
+				if(this.boxedCommentDefinitionVertical != ""){
+					while(this.getStringWidth(thisLine + this.boxedCommentDefinitionVertical) < width){
+						thisLine += " ";
+					}
 				}
 
 				// e.g.: [| original comment              |]
@@ -332,7 +334,6 @@ export class commentBox{
 			// e.g.: [+--------------------+]
 			thisLine += COMMENT_TOKEN_DEFINITIONS[lang].blockCommentEnd;
 
-			thisLine += EOL;
 			out += thisLine;
 			out += EOL;
 
@@ -380,8 +381,10 @@ export class commentBox{
 				thisLine += comment;
 
 				// e.g.: [// | original comment          ]
-				while(this.getStringWidth(thisLine + this.boxedCommentDefinitionVertical) < width){
-					thisLine += " ";
+				if(this.boxedCommentDefinitionVertical != ""){
+					while(this.getStringWidth(thisLine + this.boxedCommentDefinitionVertical) < width){
+						thisLine += " ";
+					}
 				}
 
 				// e.g.: [// | original comment          |]
@@ -406,7 +409,6 @@ export class commentBox{
 			// e.g.: [// +---------------------+]
 			thisLine += this.boxedCommentDefinitionCorner;
 
-			thisLine += EOL;
 			out += thisLine;
 			out += EOL;
 		}
@@ -508,11 +510,18 @@ export class commentBox{
 			return null;
 		}
 
-		for(let i = (str.length - snippet.length); i >= snippet.length; --i){
-			if(str.substring(i - snippet.length, i) == snippet){
-				const startCursor = doc.positionAt(i - snippet.length);
-				const range = new vscode.Range(startCursor, cursor);
-				if(!commentBox.isComment(doc, startCursor))	return range;
+		if(commentBox.isComment(doc, cursor)) return null;
+
+		for(let i = cursor.line; i >= 0; --i){
+			const line = doc.lineAt(i);
+			if(i == cursor.line && line.text.length < (snippet.length * 2 + 1)) continue;
+			if(commentBox.isComment(doc, new vscode.Position(i, 0))) continue;
+			if(line.text.substring(0, snippet.length) == snippet){
+				const range = new vscode.Range(
+					new vscode.Position(i, 0),
+					cursor
+				);
+				return range;
 			}
 		}
 
@@ -520,7 +529,22 @@ export class commentBox{
 	}
 	
 	/**
-	 * ### Returns is the cursor in comment or not.
+	 * ### Returns EOL characters of editing document
+	 * @returns EOL
+	 */
+	private getEndOfLine(): string{
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+		  const document = editor.document;
+		  const eol = document.eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
+		  return eol;
+		}
+		return "\n";
+	}
+
+
+	/**
+	 * ### Returns if the cursor is in a comment or not.
 	 * @param doc Editing document
 	 * @param cursor Examining position
 	 * @returns bool
@@ -539,31 +563,17 @@ export class commentBox{
 		const blockCommentEnd = COMMENT_TOKEN_DEFINITIONS[doc.languageId].blockCommentEnd;
 		if(blockCommentBegin == "" || blockCommentEnd == "") return false;
 
+		const text = doc.getText();
 		for(let i = cursorIdx; i >= 0; --i){
-			let s = doc.getText().substring(i, cursorIdx);
+			let s = text.substring(i, cursorIdx);
 			if(s.includes(blockCommentBegin) && !s.includes(blockCommentEnd)){
-				for(let ii = cursorIdx; ii < doc.getText().length; ++ii){
-					let ss = doc.getText().substring(cursorIdx, ii);
+				for(let ii = cursorIdx; ii < text.length; ++ii){
+					let ss = text.substring(cursorIdx, ii);
 					if(!ss.includes(blockCommentBegin) && ss.includes(blockCommentEnd)) return true;
 				}
 			}
 		}
 
 		return false;
-	}
-
-	
-	/**
-	 * ### Returns EOL characters of editing document
-	 * @returns EOL
-	 */
-	private getEndOfLine(): string{
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-		  const document = editor.document;
-		  const eol = document.eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
-		  return eol;
-		}
-		return "\n";
 	}
 }
