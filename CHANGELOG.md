@@ -14,3 +14,7 @@
 ## 1.1.1
 ### Bugfix
 - Unexpected char count in oneline comment (#9)
+
+## 1.2.0
+- Changed default settings
+- Unexpected EOL after a multi line comment
