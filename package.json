@@ -3,7 +3,7 @@
   "displayName": "Comment Box Generator",
   "publisher": "KaiManabe",
   "description": "Generates decolated comment.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "icon": "media/icon.png",
   "license": "MIT",
   "repository": {
@@ -57,12 +57,12 @@
           },
           "commentBox.boxedCommentDefinition.vertical": {
             "type": "string",
-            "default": "|",
+            "default": "",
             "description": "Set a character constructs multi-line comment"
           },
           "commentBox.boxedCommentDefinition.corner": {
             "type": "string",
-            "default": "+",
+            "default": "-",
             "description": "Set a character constructs multi-line comment"
           },
           "commentBox.width": {
