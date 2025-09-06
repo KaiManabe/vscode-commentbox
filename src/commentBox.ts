@@ -472,7 +472,10 @@ export class commentBox{
 	 * @returns If the user wrapped
 	 */
 	private isGeneratingOneline(doc: vscode.TextDocument, currentCursor: vscode.Position): boolean{
-		return this.getEditingRange(doc, currentCursor, this.onelineSnippet) != null;
+		const range = this.getEditingRange(doc, currentCursor, this.onelineSnippet);
+		if(range == null) return false;
+		if(doc.getText(range).indexOf(this.getEndOfLine()) >= 0) return false;
+		return true;
 	}
 
 
@@ -515,13 +518,23 @@ export class commentBox{
 		for(let i = cursor.line; i >= 0; --i){
 			const line = doc.lineAt(i);
 			if(i == cursor.line && line.text.length < (snippet.length * 2 + 1)) continue;
-			if(commentBox.isComment(doc, new vscode.Position(i, 0))) continue;
-			if(line.text.substring(0, snippet.length) == snippet){
-				const range = new vscode.Range(
-					new vscode.Position(i, 0),
-					cursor
-				);
-				return range;
+
+			let offsetEnd = line.text.length - snippet.length;
+			if(i == cursor.line){
+				offsetEnd = cursor.character;
+				offsetEnd -= snippet.length;
+				offsetEnd -= 1;
+			}
+
+			for(let offset = offsetEnd; offset >= 0; --offset){
+				if(line.text.substring(offset, snippet.length + offset) == snippet){
+					if(commentBox.isComment(doc, new vscode.Position(i, offset))) continue;
+					const range = new vscode.Range(
+						new vscode.Position(i, offset),
+						cursor
+					);
+					return range;
+				}
 			}
 		}
 
