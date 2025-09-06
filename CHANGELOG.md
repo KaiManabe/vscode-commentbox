@@ -18,3 +18,7 @@
 ## 1.2.0
 - Changed default settings
 - Unexpected EOL after a multi line comment
+
+## 1.2.1
+### Bugfix
+- Not working at indented line (#11)
