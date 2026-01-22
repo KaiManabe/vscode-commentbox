@@ -22,3 +22,7 @@
 ## 1.2.1
 ### Bugfix
 - Not working at indented line (#11)
+
+## 1.2.2
+### Feature
+- Supporting jsx, tsx
